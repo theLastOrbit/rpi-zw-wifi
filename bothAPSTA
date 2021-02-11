@@ -1,5 +1,6 @@
 #!/bin/bash
 # The script configures simultaneous AP and Managed Mode Wifi on Raspberry Pi Zero W (should also work on Raspberry Pi 3)
+# Licence: GPLv3
 
 # Error management
 set -o errexit
