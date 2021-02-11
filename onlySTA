@@ -1,0 +1,62 @@
+#!/bin/bash
+# The script configures Wifi Client on Raspberry Pi Zero W (should also work on Raspberry Pi 3)
+
+# Error management
+set -o errexit
+set -o pipefail
+set -o nounset
+
+usage() {
+    cat 1>&2 <<EOF
+Configures Wifi Client on Raspberry Pi
+
+USAGE:
+    rpi-wifi -c <client_ssid> [<client_password>]
+    
+    rpi-wifi -c MyWifiSSID mywifipass
+
+PARAMETERS:
+    -c, --client	Client SSID & password
+EOF
+    exit 0
+}
+
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -c|--client)
+    CLIENT_SSID="$2"
+    CLIENT_PASSPHRASE="$3"
+    shift
+    shift
+    shift
+    ;;
+    -h|--help)
+    usage
+    shift
+	;;
+    *)
+    POSITIONAL+=("$1")
+    shift
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}"
+
+# Populate `/etc/wpa_supplicant/wpa_supplicant.conf`
+sudo bash -c 'cat > /etc/wpa_supplicant/wpa_supplicant.conf' << EOF
+country=US
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={
+    ssid="${CLIENT_SSID}"
+    $([ $CLIENT_PASSPHRASE ] && echo "psk=\"${CLIENT_PASSPHRASE}\"")
+    id_str="AP1"
+}
+EOF
+
+echo "Wifi Client configuration is finished! Please reboot your Raspberry Pi to apply changes..."
