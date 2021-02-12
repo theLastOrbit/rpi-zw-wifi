@@ -61,3 +61,6 @@ network={
 EOF
 
 echo "Wifi Client configuration is finished! Please reboot your Raspberry Pi to apply changes..."
+echo "AquaTerraWifiSetupCompleted"
+
+sudo reboot
